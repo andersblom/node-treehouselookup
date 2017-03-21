@@ -1,3 +1,5 @@
+const Profile = require("./profile.js");
+
 //When URL is blank
 function homeRoute(request, response) {
     if (request.url === "/") {
@@ -14,6 +16,23 @@ function userRoute(request, response) {
     if (username.length > 0) {
         response.writeHead(200, {"Content-Type": "text/plain"});
         response.write("Header\n");
+        //Get JSON from Treehouse
+        const studentProfile = new Profile(username);
+        studentProfile.on("end", function(profileJSON) {
+            //Show profile
+            const values = {
+                avatar: profileJSON.gravatar_url,
+                username: profileJSON.profile_name,
+                badges: profileJSON.badges.length,
+                javascriptPoints: profileJSON.points.JavaScript
+            };
+            //Simple response
+        });
+
+        studentProfile.on("error", function(){
+            //Show error
+
+        });
         response.write("Profile: " + request.url + "\n");
         response.end("Footer\n");
     }

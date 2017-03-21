@@ -1,6 +1,6 @@
 'use strict';
 const http = require("http");
-const router = require("./router");
+const router = require("./router.js");
 
 http.createServer((request, response) => {
     router.home(request, response);
