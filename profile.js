@@ -14,7 +14,7 @@ function Profile(username) {
 
     profileEmitter = this;
 
-    //Connect to the API URL (http://teamtreehouse.com/username.json)
+    //Connect to the API URL (https://teamtreehouse.com/username.json)
     var request = https.get("https://teamtreehouse.com/" + username + ".json", function(response) {
         var body = "";
 

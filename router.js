@@ -1,12 +1,16 @@
+'use strict';
 const Profile = require("./profile.js");
+const renderer = require("./renderer");
+const commonHeader = {"Content-Type": "text/html"};
 
 //When URL is blank
 function home(request, response) {
     if (request.url === "/") {
-        response.writeHead(200, {"Content-Type": "text/plain"});
-        response.write("Header\n");
-        response.write("Search\n");
-        response.end("Footer\n");
+        response.writeHead(200, commonHeader);
+        renderer.view("header", {}, response);
+        renderer.view("search", {}, response);
+        renderer.view("footer", {}, response);
+        response.end();
     }
 }
 
@@ -14,9 +18,8 @@ function home(request, response) {
 function user(request, response) {
     const username = request.url.replace("/", "");
     if (username.length > 0) {
-        response.writeHead(200, {"Content-Type": "text/plain"});
-        response.write("Header\n");
-        
+        response.writeHead(200, commonHeader);
+        renderer.view("header", {}, response);
         //Get JSON from Treehouse
         const studentProfile = new Profile(username);
 
@@ -29,14 +32,17 @@ function user(request, response) {
                 javascriptPoints: profileJSON.points.JavaScript
             }            
             //Simple response
-            response.write(values.username + " has " + values.badges + " badges\n")
-            response.end("Footer\n");
+            renderer.view("profile", values, response);
+            renderer.view("footer", {}, response);
+            response.end();
         });
 
         studentProfile.on("error", function(error) {
             //Show error
-            response.write(error.message + "\n");
-            response.end("Footer\n");
+            renderer.view("error", {errorMessage: error.message}, response);
+            renderer.view("search", {}, response);
+            renderer.view("footer", {}, response);
+            response.end();
         });
    
     }
