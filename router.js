@@ -1,16 +1,27 @@
 'use strict';
 const Profile = require("./profile.js");
 const renderer = require("./renderer");
+const querystring = require("querystring");
 const commonHeader = {"Content-Type": "text/html"};
+
 
 //When URL is blank
 function home(request, response) {
     if (request.url === "/") {
-        response.writeHead(200, commonHeader);
-        renderer.view("header", {}, response);
-        renderer.view("search", {}, response);
-        renderer.view("footer", {}, response);
-        response.end();
+        if (request.method.toLowerCase() === "get") {
+            response.writeHead(200, commonHeader);
+            renderer.view("header", {}, response);
+            renderer.view("search", {}, response);
+            renderer.view("footer", {}, response);
+            response.end();
+        } else {
+            request.on("data", function(postBody){
+                var query = querystring.parse(postBody.toString());
+                response.writeHead(303, {"Location": "/" + query.username});
+                response.end();
+            });
+            
+        }
     }
 }
 
